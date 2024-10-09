@@ -2,38 +2,34 @@ name: CI
 
 on:
   - push
-  - workflow_dispatch
+  - workflow_disptach
+
+env:
+    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
 jobs:
-  ### Analyze Security Vulnerabilities
+  # Analyze Security Vulnerabilities
   security:
     permissions:
-      contents: write # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: write # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-    name: Analyze Security Vulnerabilities
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+      contents: read
+      security-events: write
+      actions: read
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
-      - name: Grant executable permission to Gradle
-        run: chmod 777 /root/.gradle/wrapper/dists/gradle-5.6.4-all/ankdp27end7byghfw1q2sw75f/gradle-5.6.4/bin/gradle
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle-jdk11@master 
-        # to make sure that SARIF upload gets called
+      - name: Install Snyk
+        uses: snyk/actions/setup@806182742461562b67788a64410098c9d9b96adb
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: run Snyk Open Source Test
+        run: snyk test
         continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args:
-            --sarif-file-output=snyk.sarif .
-      - name: Upload result to workflow artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          # tests and linter reports
-          name: snyk.sarif
-          path: snyk.sarif
+      - name: run Snyk Code Test
+        run: snyk code test
+        continue-on-error: true
 
