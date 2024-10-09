@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle-jdk11@master 
         # to make sure that SARIF upload gets called
