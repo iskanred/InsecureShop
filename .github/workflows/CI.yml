@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  ### Analyze Security Vulnerabilities
+  security:
+    name: Analyze Security Vulnerabilities
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/gradle-jdk11@master 
+        # to make sure that SARIF upload gets called
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args:
+            --sarif-file-output=snyk.sarif
+            ${{ env.PROJECT_DIR }}
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          checkout_path: ${{ env.PROJECT_DIR }}
+          sarif_file: snyk.sarif
+      - name: Upload result to workflow artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          # tests and linter reports
+          name: snyk.sarif
+          path: snyk.sarif
+
