@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Make gradlew executable
+	run: chmod +x ./gradlew
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle-jdk11@master 
         # to make sure that SARIF upload gets called
@@ -22,11 +24,11 @@ jobs:
         with:
           args:
             --sarif-file-output=snyk.sarif
-            ${{ env.PROJECT_DIR }}
+            .
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          checkout_path: ${{ env.PROJECT_DIR }}
+          checkout_path: .
           sarif_file: snyk.sarif
       - name: Upload result to workflow artifacts
         uses: actions/upload-artifact@v3
