@@ -15,6 +15,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
+      - name: Grant executable permission to Gradle
+        run: chmod +x /root/.gradle/wrapper/dists/gradle-5.6.4-all/ankdp27end7byghfw1q2sw75f/gradle-5.6.4/bin/gradle
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/gradle-jdk11@master 
         # to make sure that SARIF upload gets called
