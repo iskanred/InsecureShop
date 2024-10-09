@@ -10,11 +10,12 @@ env:
 jobs:
   # Analyze Security Vulnerabilities
   security:
+    name: Analyze Security Vulnerabilities
     permissions:
       contents: read
       security-events: write
       actions: read
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
