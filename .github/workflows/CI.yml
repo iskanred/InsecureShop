@@ -2,10 +2,10 @@ name: CI
 
 on:
   - push
-  - workflow_disptach
+  - workflow_dispatch
 
 env:
-    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
 jobs:
   # Analyze Security Vulnerabilities
