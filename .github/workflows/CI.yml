@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: 11
       - name: run Snyk Open Source Test
-        run: snyk test
+        run: snyk test --all-sub-projects
         continue-on-error: true
       - name: run Snyk Code Test
         run: snyk code test
